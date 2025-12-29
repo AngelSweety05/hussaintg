@@ -200,9 +200,12 @@ async def home_handler(c, cb):
 async def about_handler(c, cb):
     about_text = """
 
+ཫ👑 This bot is owned by : <b>@Husen751</b> .
+--
 🧠 <b>Powered By:</b> Pyrogram & MongoDB  
 🔐 <b>Secure:</b> Auth-based Admin Panel & Dynamic Buttons
-
+--
+ཫ🧡 Made with love by LazyDeveloperr .
 """
     lazydeveloper_btn = [[
             InlineKeyboardButton('ཫ𐰌𓇽 HOME 𓇽𐰌ཀ', callback_data="home")
