@@ -62,7 +62,7 @@ async def accept(client, message):
         return
     try:
         acc = Client("joinpendings", session_string=user_data, api_hash=API_HASH, api_id=API_ID)
-        await acc.connect()
+        await acc.start()
     except:
         return await show.edit("**Your Login Session Expired. So /logout First Then Login Again By - /login**")
     show = await show.edit("**Now Forward A Message From Your Channel Or Group With Forward Tag\n\nMake Sure Your Logged In Account Is Admin In That Channel Or Group With Full Rights.**")
@@ -84,6 +84,7 @@ async def accept(client, message):
             join_requests = [request async for request in acc.get_chat_join_requests(chat_id)]
             if not join_requests:
                 break
+        await acc.stop()
         await msg.edit("**Successfully accepted all join requests.**")
     except Exception as e:
         await msg.edit(f"**An error occurred:** {str(e)}")
@@ -342,4 +343,5 @@ async def req_accept(client, m):
 
     except Exception as e:
         print(e)
+
 
