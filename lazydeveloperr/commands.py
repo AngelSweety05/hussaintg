@@ -77,19 +77,17 @@ async def accept(client, message):
         return await message.reply("**Message Not Forwarded From Channel Or Group.**")
     await chatz.delete()
     msg = await show.edit("**Accepting all join requests... Please wait until it's completed.**")
-    try:
-        while True:
-            await acc.approve_all_chat_join_requests(chat_id)
-            await asyncio.sleep(1)
-            join_requests = [request async for request in acc.get_chat_join_requests(chat_id)]
-            if not join_requests:
-                break
-        
-        await msg.edit("**Successfully accepted all join requests.**")
-    except Exception as e:
-        await msg.edit(f"**An error occurred:** {str(e)}")
-    finally:
-        await acc.disconnect()
+    
+    approved = 0
+    async for req in acc.get_chat_join_requests(chat_id):
+        try:
+            await acc.approve_chat_join_request(chat_id, req.user.id)
+            approved += 1
+        except BadRequest:
+            pass
+
+    await msg.edit(f"✅ **Approved {approved} join requests.**")
+    await acc.disconnect()
     
 @Client.on_message(filters.command("set_video") & filters.user(ADMINS))
 async def set_video(c, m):
@@ -345,6 +343,7 @@ async def req_accept(client, m):
 
     except Exception as e:
         print(e)
+
 
 
 
