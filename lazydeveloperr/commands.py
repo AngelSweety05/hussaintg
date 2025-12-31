@@ -85,7 +85,7 @@ async def accept(client, message):
             approved += 1
         except Exception as e:
             if "HIDE_REQUESTER_MISSING" in str(e):
-                pass
+                continue
             else:
                 break
 
@@ -346,6 +346,7 @@ async def req_accept(client, m):
 
     except Exception as e:
         print(e)
+
 
 
 
