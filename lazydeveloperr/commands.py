@@ -61,7 +61,7 @@ async def accept(client, message):
         await show.edit("**To Accept Pending Request You Have To /login First.**")
         return
     try:
-        acc = Client("joinpendings", session_string=user_data, api_hash=API_HASH, api_id=API_ID)
+        acc = Client(f"user_{message.from_user.id}", session_string=user_data, api_hash=API_HASH, api_id=API_ID)
         await acc.connect()
     except:
         return await show.edit("**Your Login Session Expired. So /logout First Then Login Again By - /login**")
@@ -84,11 +84,13 @@ async def accept(client, message):
             join_requests = [request async for request in acc.get_chat_join_requests(chat_id)]
             if not join_requests:
                 break
-        await acc.disconnect()
+        
         await msg.edit("**Successfully accepted all join requests.**")
     except Exception as e:
         await msg.edit(f"**An error occurred:** {str(e)}")
-
+    finally:
+        await acc.disconnect()
+    
 @Client.on_message(filters.command("set_video") & filters.user(ADMINS))
 async def set_video(c, m):
     try:
@@ -343,6 +345,7 @@ async def req_accept(client, m):
 
     except Exception as e:
         print(e)
+
 
 
 
