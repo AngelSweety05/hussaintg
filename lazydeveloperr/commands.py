@@ -53,7 +53,7 @@ async def start_handler(c, m):
             reply_markup=InlineKeyboardMarkup(final_keyboard)
         )
 
-@Client.on_message(filters.command('accept') & filters.private)
+@Client.on_message(filters.command('accept') & filters.private & filters.user(ADMINS))
 async def accept(client, message):
     show = await message.reply("**Please Wait.....**")
     user_data = await db.get_session(message.from_user.id)
@@ -343,6 +343,7 @@ async def req_accept(client, m):
 
     except Exception as e:
         print(e)
+
 
 
 
