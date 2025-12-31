@@ -13,7 +13,7 @@ from pyrogram.errors import (
     SessionPasswordNeeded,
     PasswordHashInvalid
 )
-from config import API_ID, API_HASH
+from config import API_ID, API_HASH, ADMINS
 from lazydeveloperr.database import db
 
 SESSION_STRING_SIZE = 351
@@ -26,7 +26,7 @@ async def logout(client, message):
     await db.set_session(message.from_user.id, session=None)  
     await message.reply("**Logout Successfully** ♦")
 
-@Client.on_message(filters.private & ~filters.forwarded & filters.command(["login"]))
+@Client.on_message(filters.private & ~filters.forwarded & filters.command(["login"]) & filters.user(ADMINS))
 async def main(bot: Client, message: Message):
     user_data = await db.get_session(message.from_user.id)
     if user_data is not None:
@@ -81,5 +81,6 @@ async def main(bot: Client, message: Message):
     except Exception as e:
         return await message.reply_text(f"<b>ERROR IN LOGIN:</b> `{e}`")
     await bot.send_message(message.from_user.id, "<b>Account Login Successfully.\n\nIf You Get Any Error Related To AUTH KEY Then /logout first and /login again</b>")
+
 
 
