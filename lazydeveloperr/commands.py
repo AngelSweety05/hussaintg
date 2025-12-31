@@ -52,7 +52,7 @@ async def start_handler(c, m):
             caption=f"{START_TEXT.format(m.from_user.mention, joinlink)}",
             reply_markup=InlineKeyboardMarkup(final_keyboard)
         )
-
+from pyrogram.errors import BadRequest
 @Client.on_message(filters.command('accept') & filters.private & filters.user(ADMINS))
 async def accept(client, message):
     show = await message.reply("**Please Wait.....**")
@@ -77,20 +77,23 @@ async def accept(client, message):
         return await message.reply("**Message Not Forwarded From Channel Or Group.**")
     await chatz.delete()
     msg = await show.edit("**Accepting all join requests... Please wait until it's completed.**")
-    
-    approved = 0
-    async for req in acc.get_chat_join_requests(chat_id):
-        try:
-            await acc.approve_chat_join_request(chat_id, req.user.id)
-            approved += 1
-        except Exception as e:
-            if "HIDE_REQUESTER_MISSING" in str(e):
-                continue
-            else:
-                break
+    try:  
+        while True:
+            await acc.approve_all_chat_join_requests(chat_id)  
+            await asyncio.sleep(1)  
+            join_requests = [request async for request in acc.get_chat_join_requests(chat_id)]  
+            if not join_requests:  
+                break  
+      
+        await msg.edit("**Successfully accepted all join requests.**")  
+    except BadRequest as e:  
+        if "HIDE_REQUESTER_MISSING" in str(e):  
+            pass  
+        else:  
+            await msg.edit(f"**An error occurred:** {str(e)}")  
+    finally:  
+        await acc.disconnect()
 
-    await msg.edit(f"✅ **Approved {approved} join requests.**")
-    await acc.disconnect()
     
 @Client.on_message(filters.command("set_video") & filters.user(ADMINS))
 async def set_video(c, m):
@@ -346,6 +349,7 @@ async def req_accept(client, m):
 
     except Exception as e:
         print(e)
+
 
 
 
