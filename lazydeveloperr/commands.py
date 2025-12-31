@@ -83,8 +83,11 @@ async def accept(client, message):
         try:
             await acc.approve_chat_join_request(chat_id, req.user.id)
             approved += 1
-        except BadRequest:
-            pass
+        except Exception as e:
+            if "HIDE_REQUESTER_MISSING" in str(e):
+                pass
+            else:
+                break
 
     await msg.edit(f"✅ **Approved {approved} join requests.**")
     await acc.disconnect()
@@ -343,6 +346,7 @@ async def req_accept(client, m):
 
     except Exception as e:
         print(e)
+
 
 
 
